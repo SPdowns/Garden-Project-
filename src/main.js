@@ -2,8 +2,21 @@ import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles.css";
 import $ from "jquery";
-import { ZipService } from "./../JS Business logic/plants.js";
+import { ZipService } from "./../JS Business logic/zipservice.js";
 import { PlantService } from "./../JS Business logic/plants.js";
+
+window.onscroll = function () { navBar() };
+
+var navbar = document.getElementById("navbar");
+var sticky = navbar.offsetTop;
+
+function navBar() {
+  if (window.pageYOffset >= sticky) {
+    navbar.classList.add("sticky");
+  } else {
+    navbar.classList.remove("sticky");
+  }
+}
 
 $(document).ready(function () {
   $("#buttonAbout").click(function () {
@@ -49,7 +62,7 @@ $(document).ready(function () {
     let life = $("#life").val();
     let shade = $("#shade").val();
     let durability = $("#durability").val();
-    
+
     (async () => {
       let plantsReturn = new PlantService();
       let plantsResponse = await plantsReturn.getPlant(
@@ -61,29 +74,17 @@ $(document).ready(function () {
         durability
       );
       showPlants(plantsResponse);
-      console.log(plantsResponse);
     })();
-
-    // function showPlants(plantsResponse) {
-    //   if (plantsResponse) {
-    //     $(".plant-output").text(
-    //       `Here is a list of plants ${plantsResponse[1].common_name}, ${plantsResponse[2].common_name}, ${plantsResponse[3].common_name}, ${plantsResponse[4].common_name}, ${plantsResponse[5].common_name}`
-    //     );
-    //   } else {
-    //     $(".plant-output").text(`Error`);
-    //   }
-    // }
 
     function showPlants(plantsResponse) {
       if (plantsResponse) {
         let htmlInfo;
         for (let i = 0; i < plantsResponse.length; i++) {
           htmlInfo = `<a id="${plantsResponse[i].id}" href="#">                        
-                  <div class="card1">
-                  <h5 class="common-name">${plantsResponse[i].common_name}</h5>   
-                    <img class="card-img-top1" src="https://bs.floristic.org/image/o/${plantsResponse[i].images[0].url}" style="width: 9rem" alt="Card image cap">
-                    <p class="year-title">Drought :${plantsResponse[i].id}</p>
-                  </div>     
+              <div class="card1">
+              <h5 class="common-name">${plantsResponse[i].common_name}</h5>
+                <p class="year-title">Scientific Name: ${plantsResponse[i].scientific_name}</p>
+              </div>     
             </a>`;
           $('.plant-output').append(`${htmlInfo}`);
         }
@@ -91,8 +92,5 @@ $(document).ready(function () {
         $('.plant-output').text(`There was an error handling your request.`);
       }
     }
-
-
-
   });
 });
